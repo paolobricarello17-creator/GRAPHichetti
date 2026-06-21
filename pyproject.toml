@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphichetti"
+version = "0.1.0"
+description = "Libreria per la generazione di grafici geometrici nativi in SVG"
+dependencies = [
+    "pandas",
+    "scipy",
+    "svg"  # Include la libreria svg che usi per generare Rect, Line, Circle, ecc.
+]
+
+[tool.setuptools]
+packages = ["GRAPHici"]
+py-modules = ["main_functions"]
