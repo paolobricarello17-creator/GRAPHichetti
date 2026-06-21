@@ -7,11 +7,11 @@ from .GRAPHici.detect_graph_type import detect_graph_type
 from .GRAPHici.initialize_graph import initialize_graph
 
 # Importiamo i moduli dei singoli grafici
-from .GRAPHici.Bar_plot import Bar_plot
+from .GRAPHici.Bar_plot import Grafico_barre
 from .GRAPHici.Pie_chart import Grafico_torta
 from .GRAPHici.Hist_chart import Istogramma
 from .GRAPHici.Scatter_plot import Scatterplot
-from .GRAPHici.Composed_barchart import Composed_barchart
+from .GRAPHici.Composed_barchart import Grafico_barre_composto
 
 
 def crea_grafico(variable1, variable2=None, graph=None):
@@ -30,7 +30,7 @@ def crea_grafico(variable1, variable2=None, graph=None):
     
     # Smistamento (Dispatching) al modulo corretto
     if tipo_grafico == "bar":
-        return Bar_plot(variable1, graph)
+        return Grafico_barre(variable1, graph)
         
     elif tipo_grafico == "pie":
         return Grafico_torta(variable1, graph)
@@ -42,7 +42,7 @@ def crea_grafico(variable1, variable2=None, graph=None):
         return Scatterplot(variable1, variable2, graph)
         
     elif tipo_grafico == "composed_barchart":
-        return Composed_barchart(variable1, variable2, graph)
+        return Grafico_barre_composto(variable1, variable2, graph)
         
     else:
         raise ValueError(f"Tipo di grafico '{tipo_grafico}' non supportato o non riconosciuto.")
