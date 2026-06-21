@@ -9,7 +9,7 @@ description = "Libreria per la generazione di grafici geometrici nativi in SVG"
 dependencies = [
     "pandas",
     "scipy",
-    "svg"  # Include la libreria svg che usi per generare Rect, Line, Circle, ecc.
+    "svg.py"  # Include la libreria svg che usi per generare Rect, Line, Circle, ecc.
 ]
 
 [tool.setuptools]
