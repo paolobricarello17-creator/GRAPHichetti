@@ -3,7 +3,7 @@ import pandas as pd
 from svg import SVG, Circle, Path, Text, Rect
 
 
-from initialize_graph import initialize_graph
+from .initialize_graph import initialize_graph
 
 
 def _get_modes(variable1):

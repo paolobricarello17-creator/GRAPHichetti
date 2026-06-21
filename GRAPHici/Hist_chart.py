@@ -3,7 +3,7 @@ import pandas as pd
 from svg import SVG, Line, Text, Rect
 
 
-from initialize_graph import initialize_graph
+from .initialize_graph import initialize_graph
 
 
 def Istogramma(variable1, graph=None):

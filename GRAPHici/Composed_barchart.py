@@ -2,7 +2,7 @@
 import pandas as pd
 from svg import SVG, Rect, Line, Text
 
-from initialize_graph import initialize_graph
+from .initialize_graph import initialize_graph
 
 
 def Grafico_barre_composto(variable1, variable2, graph=None):

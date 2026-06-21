@@ -3,15 +3,15 @@ import pandas as pd
 
 
 # Importiamo le funzioni di controllo dal pacchetto GRAPHici
-from GRAPHici.detect_graph_type import detect_graph_type
-from GRAPHici.initialize_graph import initialize_graph
+from .GRAPHici.detect_graph_type import detect_graph_type
+from .GRAPHici.initialize_graph import initialize_graph
 
 # Importiamo i moduli dei singoli grafici
-from GRAPHici.Bar_plot import Bar_plot
-from GRAPHici.Pie_chart import Grafico_torta
-from GRAPHici.Hist_chart import Istogramma
-from GRAPHici.Scatter_plot import Scatterplot
-from GRAPHici.Composed_barchart import Composed_barchart
+from .GRAPHici.Bar_plot import Bar_plot
+from .GRAPHici.Pie_chart import Grafico_torta
+from .GRAPHici.Hist_chart import Istogramma
+from .GRAPHici.Scatter_plot import Scatterplot
+from .GRAPHici.Composed_barchart import Composed_barchart
 
 
 def crea_grafico(variable1, variable2=None, graph=None):

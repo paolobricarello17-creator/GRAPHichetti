@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.stats import linregress
 from svg import SVG, Line, Circle, Text, Rect
 
-from initialize_graph import initialize_graph
+from .initialize_graph import initialize_graph
 
 
 def Scatterplot(variable1, variable2, graph=None):

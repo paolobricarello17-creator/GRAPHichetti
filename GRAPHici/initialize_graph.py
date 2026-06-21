@@ -1,4 +1,4 @@
-from detect_graph_type import detect_graph_type as dgt
+from .detect_graph_type import detect_graph_type as dgt
 import pandas as pd
 
 #funzisone che inizializza l'oggetto grafico, l'ho tenuta in un file a parte per porte modificare i predefined settings 
