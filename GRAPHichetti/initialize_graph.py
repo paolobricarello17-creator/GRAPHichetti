@@ -17,7 +17,7 @@ def initialize_graph(variable1, variable2=None):
         "colore 2": "white",
         "etichette assi": True,
         "valori": True, 
-        "numero_split": False,
+        "numero split": False,
         "bordi": 1,
         "assi": True,
         "highlight": True, 
