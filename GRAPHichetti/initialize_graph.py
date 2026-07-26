@@ -15,7 +15,7 @@ def initialize_graph(variable1, variable2=None):
         # --- IMPOSTAZIONI PREDEFINITE (con underscore per matchare l'AI) ---
         "colore_1": "#FFD151",
         "colore_2": "white",
-        "etichette_assi": True,
+        "etichette assi": True,
         "valori": True, 
         "numero_split": False,
         "bordi": 1,
