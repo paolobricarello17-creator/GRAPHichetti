@@ -19,10 +19,10 @@ def Istogramma(variable1, graph=None):
     n_osservazioni = len(variable1_df)
     
     # Calcolo numero di split (bins)
-    if graph["numero split"] is False or graph["numero split"] == False:
+    if graph["numero_split"] is False or graph["numero_split"] == False:
         n_bins = int(math.ceil(math.log2(n_osservazioni) + 1))  # Regola di Sturges
     else:
-        n_bins = int(graph['numero split'])
+        n_bins = int(graph['numero_split'])
 
     # Creazione intervalli e conteggio frequenze
     bins_series = pd.cut(variable1_df.iloc[:, 0], bins=n_bins)
@@ -56,7 +56,7 @@ def Istogramma(variable1, graph=None):
         assi = []
 
     ## 3. Etichette Assi (Intervalli) ##
-    if graph['etichette assi'] == True:
+    if graph['etichette_assi'] == True:
         etichette_assi = []
         for i in range(n_categorie):
             x_centro = 10 + (i * larghezza_barra) + (larghezza_barra / 2)
@@ -99,9 +99,9 @@ def Istogramma(variable1, graph=None):
     barre = []
     for i in range(n_categorie):
         if category_name[i] in nomi_moda and graph['highlight'] == True:
-            fill = graph['colore 1']
+            fill = graph['colore1']
         else:
-            fill = graph['colore 2']
+            fill = graph['colore2']
             
         altezza = (valori[i] / valore_massimo) * altezza_max_grafico
         
@@ -118,7 +118,7 @@ def Istogramma(variable1, graph=None):
         )
 
     ## 6. KPI ##
-    if graph['KPI'] == True:
+    if graph['kpi'] == True:
         KPI = []
         voci_kpi = [
             f"N.osservazioni: {n_osservazioni}", 
@@ -148,7 +148,7 @@ def Istogramma(variable1, graph=None):
                     y=20,
                     height=10,
                     width=10,
-                    fill=graph['colore 1'],
+                    fill=graph['colore1'],
                     stroke="black",
                     stroke_width=0.5
                 )

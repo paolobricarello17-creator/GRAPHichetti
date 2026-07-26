@@ -113,13 +113,13 @@ def Scatterplot(variable1, variable2, graph=None):
                 Line(
                     x1=cx, y1=cy, 
                     x2=cx, y2=cy_hat, 
-                    stroke=graph['colore 1'], 
+                    stroke=graph['colore1'], 
                     stroke_width=1.5, 
                     stroke_dasharray="4,4" 
                 )
             )
             
-        fill_color = graph['colore 1'] if is_outlier else "black"
+        fill_color = graph['colore1'] if is_outlier else "black"
         radius = 4 if is_outlier else 2.5 
         
         barre.append(
@@ -132,7 +132,7 @@ def Scatterplot(variable1, variable2, graph=None):
         )
 
     ## 4. Etichette Assi (Estremi X) ##
-    if graph['etichette assi'] == True:
+    if graph['etichette_assi'] == True:
         etichette_assi = [
             Text(x=scale_x(df['x'].min()), y=395, elements=[f"{df['x'].min():.1f}"], text_anchor="middle", font_size=10, font_family="Helvetica", fill="black"),
             Text(x=scale_x(df['x'].max()), y=395, elements=[f"{df['x'].max():.1f}"], text_anchor="middle", font_size=10, font_family="Helvetica", fill="black")
@@ -144,7 +144,7 @@ def Scatterplot(variable1, variable2, graph=None):
     valori_barre = [] 
 
     ### 6. KPI ###
-    if graph['KPI'] == True:
+    if graph['kpi'] == True:
         KPI = []
         voci_kpi = [
             f"R²: {r_quadro:.3f}", 
@@ -171,7 +171,7 @@ def Scatterplot(variable1, variable2, graph=None):
                 y=20,
                 height=10,
                 width=10,
-                fill=graph['colore 1'],
+                fill=graph['colore1'],
                 stroke="black",
                 stroke_width=0.5
             )

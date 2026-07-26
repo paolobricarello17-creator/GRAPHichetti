@@ -45,9 +45,9 @@ def Grafico_torta(variable1, graph=None):
     for i in range(0, n_categorie):
         # Scelta del colore (Evidenzia lo spicchio della moda)
         if category_name[i] in moda and graph['highlight'] == True:
-            fill = graph['colore 1'] 
-        else: 
-            fill = graph['colore 2'] 
+            fill = graph['colore1']
+        else:
+            fill = graph['colore2']
 
         # Se c'è una sola categoria, fa un cerchio pieno direttamente
         if n_categorie == 1:
@@ -90,7 +90,7 @@ def Grafico_torta(variable1, graph=None):
         assi = []
 
     ## 4. Etichette delle Categorie (Legenda vicino agli spicchi) ##
-    if graph['etichette assi'] == True:
+    if graph['etichette_assi'] == True:
         etichette_assi = []
         angolo_corrente = -math.pi / 2
         
@@ -159,7 +159,7 @@ def Grafico_torta(variable1, graph=None):
         valori_barre = []
 
     ### 6. KPI ###
-    if graph['KPI'] == True:
+    if graph['kpi'] == True:
         KPI = []
         voci_kpi = [
             f"N.osservazioni: {n_osservazioni}", 
@@ -187,7 +187,7 @@ def Grafico_torta(variable1, graph=None):
                     y=200,
                     height=10,
                     width=10,
-                    fill=graph['colore 1'],
+                    fill=graph['colore1'],
                     stroke="black",
                     stroke_width=0.5
                 )

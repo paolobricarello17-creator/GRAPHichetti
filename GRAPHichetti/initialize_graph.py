@@ -13,14 +13,14 @@ def initialize_graph(variable1, variable2=None):
         # -----------------------------
 
         # --- IMPOSTAZIONI PREDEFINITE (con underscore per matchare l'AI) ---
-        "colore 1": "#FFD151",
-        "colore 2": "white",
-        "etichette assi": True,
-        "valori": True, 
-        "numero split": False,
+        "colore1": "#FFD151",
+        "colore2": "white",
+        "etichette_assi": True,
+        "valori": True,
+        "numero_split": False,
         "bordi": 1,
         "assi": True,
-        "highlight": True, 
-        "KPI": True
+        "highlight": True,
+        "kpi": True
     }
     return graph

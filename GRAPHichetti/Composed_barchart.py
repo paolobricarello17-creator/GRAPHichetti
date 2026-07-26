@@ -51,7 +51,7 @@ def Grafico_barre_composto(variable1, variable2, graph=None):
         assi = []
 
     ## 3. Etichette Assi (Categorie della Variabile 1) ##
-    if graph['etichette assi'] == True:
+    if graph['etichette_assi'] == True:
         etichette_assi = []
         for i in range(n_categorie):
             x_centro = 10 + (i * larghezza_slot) + (larghezza_slot / 2)
@@ -111,10 +111,10 @@ def Grafico_barre_composto(variable1, variable2, graph=None):
             y_pos_strato = y_corrente - altezza_strato
             
             if valore_strato == max_strato_locale and not highlight_fatto and graph['highlight'] == True:
-                fill = graph['colore 1']
+                fill = graph['colore1']
                 highlight_fatto = True 
             else:
-                fill = graph['colore 2']
+                fill = graph['colore2']
             
             barre.append(
                 Rect(
@@ -130,7 +130,7 @@ def Grafico_barre_composto(variable1, variable2, graph=None):
             y_corrente = y_pos_strato
 
     ## 6. KPI ##
-    if graph['KPI'] == True:
+    if graph['kpi'] == True:
         KPI = []
         voci_kpi = [
             f"Barra più alta: {barra_piu_alta}", 
@@ -158,7 +158,7 @@ def Grafico_barre_composto(variable1, variable2, graph=None):
                     y=20,
                     height=10,
                     width=10,
-                    fill=graph['colore 1'],
+                    fill=graph['colore1'],
                     stroke="black",
                     stroke_width=0.5
                 )

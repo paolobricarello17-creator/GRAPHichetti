@@ -52,7 +52,7 @@ def Grafico_barre(variable1, graph=None):
     # ==========================================
     # 2. ETICHETTE ASSI
     # ==========================================
-    if graph.get('etichette assi') == True:
+    if graph.get('etichette_assi') == True:
         etichette_assi = []
         for i in range(0, n_categorie):
             x_centro = 10 + (i + 1) * (580 / (n_categorie + 1))
@@ -100,9 +100,9 @@ def Grafico_barre(variable1, graph=None):
     larghezza = 300 / n_categorie
     for i in range(0, n_categorie):
         if category_name[i] in moda and graph.get('highlight') == True:
-            fill = graph.get('colore 1') 
-        else: 
-            fill = graph.get('colore 2') 
+            fill = graph.get('colore1')
+        else:
+            fill = graph.get('colore2')
             
         altezza = (valori[i] / valore_massimo) * altezza_max_grafico
         barre.append(
@@ -120,7 +120,7 @@ def Grafico_barre(variable1, graph=None):
     # ==========================================
     # 5. KPI
     # ==========================================
-    if graph.get('KPI') == True and n_categorie > 1:
+    if graph.get('kpi') == True and n_categorie > 1:
         KPI = []
         voci_kpi = [
             f"N.osservazioni: {n_osservazioni}", 
@@ -148,7 +148,7 @@ def Grafico_barre(variable1, graph=None):
                 y=12,
                 height=10,
                 width=10,
-                fill=graph.get('colore 1'),
+                fill=graph.get('colore1'),
                 stroke="black",
                 stroke_width=0.5
             )
