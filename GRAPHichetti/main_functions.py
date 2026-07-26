@@ -5,15 +5,15 @@ import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # Importiamo le funzioni di controllo dal pacchetto GRAPHici
-from .GRAPHici.detect_graph_type import detect_graph_type
-from .GRAPHici.initialize_graph import initialize_graph
+from .detect_graph_type import detect_graph_type
+from .initialize_graph import initialize_graph
 
 # Importiamo i moduli dei singoli grafici
-from .GRAPHici.Bar_plot import Grafico_barre
-from .GRAPHici.Pie_chart import Grafico_torta
-from .GRAPHici.Hist_chart import Istogramma
-from .GRAPHici.Scatter_plot import Scatterplot
-from .GRAPHici.Composed_barchart import Grafico_barre_composto
+from .Bar_plot import Grafico_barre
+from .Pie_chart import Grafico_torta
+from .Hist_chart import Istogramma
+from .Scatter_plot import Scatterplot
+from .Composed_barchart import Grafico_barre_composto
 
 # ==========================================
 # GESTIONE MODELLO NLP

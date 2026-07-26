@@ -5,13 +5,18 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "graphichetti"
 version = "0.1.0"
-description = "Libreria per la generazione di grafici geometrici nativi in SVG"
+description = "Libreria NLP per la generazione e modifica dinamica di grafici in italiano"
+readme = "README.md"
+requires-python = ">=3.8"
 dependencies = [
     "pandas",
     "scipy",
-    "svg.py" 
+    "torch",
+    "transformers",
+    "huggingface_hub",
+    "sentencepiece"
 ]
 
-[tool.setuptools]
-packages = ["GRAPHici"]
-py-modules = ["main_functions"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["GRAPHichetti*"]
