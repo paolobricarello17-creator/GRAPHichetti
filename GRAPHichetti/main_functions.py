@@ -3,6 +3,7 @@ import json
 import re
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from IPython.display import display, SVG
 
 # Importiamo le funzioni di controllo dal pacchetto GRAPHici
 from .detect_graph_type import detect_graph_type
@@ -21,12 +22,12 @@ from .Composed_barchart import Grafico_barre_composto
 _tokenizer = None
 _model = None
 
-def _carica_modello(repo_hf="Paolobricarello17/graphichetti-it5"):
+def _carica_modello(model="Paolobricarello17/graphichetti-it5"):
     global _tokenizer, _model
     if _model is None:
         print("[GRAPHichetti] Caricamento modello NLP da Hugging Face...")
-        _tokenizer = AutoTokenizer.from_pretrained(repo_hf)
-        _model = AutoModelForSeq2SeqLM.from_pretrained(repo_hf)
+        _tokenizer = AutoTokenizer.from_pretrained(model)
+        _model = AutoModelForSeq2SeqLM.from_pretrained(model)
         
         # Sposta su GPU se disponibile per velocizzare l'esecuzione
         if torch.cuda.is_available():
@@ -78,54 +79,72 @@ def _parse_output_modello(pred_str):
 # FUNZIONI PRINCIPALI
 # ==========================================
 
-def crea_grafico(variable1, variable2=None, graph=None):
-    """Funzione Regista: Inizializza lo stato e disegna il grafico."""
-    if graph is None:
-        graph = initialize_graph(variable1, variable2)
-    
+def _disegna(graph):
+    """Dispatcher interno: legge dati e tipo dal dizionario 'graph' e produce l'SVG del grafico."""
+    v1 = graph.get("_data_v1")
+    v2 = graph.get("_data_v2")
+
+    if v1 is None:
+        raise ValueError("Dati originali non trovati nel dizionario 'graph'.")
+
     tipo_grafico = graph.get("graph_type")
-    
+
     if tipo_grafico == "bar":
-        return Grafico_barre(variable1, graph)
+        return Grafico_barre(v1, graph)
     elif tipo_grafico == "pie":
-        return Grafico_torta(variable1, graph)
+        return Grafico_torta(v1, graph)
     elif tipo_grafico == "histogram":
-        return Istogramma(variable1, graph)
+        return Istogramma(v1, graph)
     elif tipo_grafico == "scatterplot":
-        return Scatterplot(variable1, variable2, graph)
+        return Scatterplot(v1, v2, graph)
     elif tipo_grafico == "composed_barchart":
-        return Grafico_barre_composto(variable1, variable2, graph)
+        return Grafico_barre_composto(v1, v2, graph)
     else:
         raise ValueError(f"Tipo di grafico '{tipo_grafico}' non supportato.")
 
 
-def modifica_grafico(prompt, graph, repo_hf="Paolobricarello17/graphichetti-it5"):
+def _mostra_grafico(plot_svg):
+    """Mostra l'SVG del grafico inline in un notebook Jupyter."""
+    display(SVG(str(plot_svg)))
+
+
+def crea_grafico(variable1, variable2=None):
+    """Funzione Regista: Inizializza lo stato, disegna e mostra il grafico. Ritorna il dizionario 'graph'."""
+    graph = initialize_graph(variable1, variable2)
+    plot_svg = _disegna(graph)
+    _mostra_grafico(plot_svg)
+    return graph
+
+
+def visualizza_grafico(graph):
+    """Ridisegna e mostra il grafico a partire dal dizionario 'graph', senza modificarlo."""
+    plot_svg = _disegna(graph)
+    _mostra_grafico(plot_svg)
+
+
+def modifica_grafico(prompt, graph, model="Paolobricarello17/graphichetti-it5"):
     """Accetta un prompt vocale/testuale, aggiorna il dizionario 'graph' e ridisegna."""
-    tokenizer, model = _carica_modello(repo_hf)
-    device = next(model.parameters()).device
-    
+    tokenizer, nlp_model = _carica_modello(model)
+    device = next(nlp_model.parameters()).device
+
     # Inferenza
     input_txt = "estrai parametri json: " + str(prompt)
     inputs = tokenizer(input_txt, return_tensors="pt").to(device)
-    
+
     with torch.no_grad():
-        outputs = model.generate(**inputs, max_length=128)
+        outputs = nlp_model.generate(**inputs, max_length=128)
     pred_str = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     # Estrazione parametri con il parser universale
     nuovi_parametri = _parse_output_modello(pred_str)
-    
+
     if nuovi_parametri:
         graph.update(nuovi_parametri)
         print(f"[GRAPHichetti] Modifiche applicate con successo: {nuovi_parametri}")
     else:
         print("[GRAPHichetti Warning] Nessuna modifica rilevata nella frase.")
 
-    # Recupero dati e ridisegno
-    v1 = graph.get("_data_v1")
-    v2 = graph.get("_data_v2")
-    
-    if v1 is None:
-        raise ValueError("Dati originali non trovati nel dizionario 'graph'.")
-        
-    return crea_grafico(v1, v2, graph=graph)
+    # Ridisegno e visualizzazione
+    plot_svg = _disegna(graph)
+    _mostra_grafico(plot_svg)
+    return graph

@@ -14,7 +14,9 @@ dependencies = [
     "torch",
     "transformers",
     "huggingface_hub",
-    "sentencepiece"
+    "sentencepiece",
+    "svg.py",
+    "ipython"
 ]
 
 [tool.setuptools.packages.find]
