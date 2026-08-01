@@ -19,21 +19,43 @@ from .Composed_barchart import Grafico_barre_composto
 # ==========================================
 # GESTIONE MODELLO NLP
 # ==========================================
-_tokenizer = None
-_model = None
 
-def _carica_modello(model="Paolobricarello17/graphichetti-it5"):
-    global _tokenizer, _model
-    if _model is None:
-        print("[GRAPHichetti] Caricamento modello NLP da Hugging Face...")
-        _tokenizer = AutoTokenizer.from_pretrained(model)
-        _model = AutoModelForSeq2SeqLM.from_pretrained(model)
-        
+# Nomi brevi selezionabili per il parametro 'model' di modifica_grafico,
+# mappati sui rispettivi repo Hugging Face. Se 'model' non e' tra questi
+# preset, viene usato cosi' com'e' come id di repo HF (permette di puntare
+# a un modello non ancora elencato qui).
+_MODELLI_PRESET = {
+    "it5": "Paolobricarello17/graphichetti-it5",
+    "bert": "Paolobricarello17/graphichetti-BERT",
+}
+
+_MODELLO_DEFAULT = "it5"
+
+# Cache dei modelli gia' caricati (repo id risolto -> (tokenizer, modello)),
+# cosi' si possono usare piu' modelli nella stessa sessione senza che uno
+# scavalchi la cache dell'altro.
+_modelli_caricati = {}
+
+
+def _risolvi_modello(model):
+    chiave = str(model).strip().lower()
+    return _MODELLI_PRESET.get(chiave, model)
+
+
+def _carica_modello(model=_MODELLO_DEFAULT):
+    repo_id = _risolvi_modello(model)
+    if repo_id not in _modelli_caricati:
+        print(f"[GRAPHichetti] Caricamento modello NLP da Hugging Face ({repo_id})...")
+        tokenizer = AutoTokenizer.from_pretrained(repo_id)
+        modello = AutoModelForSeq2SeqLM.from_pretrained(repo_id)
+
         # Sposta su GPU se disponibile per velocizzare l'esecuzione
         if torch.cuda.is_available():
-            _model.to("cuda")
-            
-    return _tokenizer, _model
+            modello.to("cuda")
+
+        _modelli_caricati[repo_id] = (tokenizer, modello)
+
+    return _modelli_caricati[repo_id]
 
 
 # Chiavi impostabili in 'graph' (vedi initialize_graph.py). Il modello NLP
@@ -71,6 +93,30 @@ def _normalizza_tipo_grafico(valore):
     return _SINONIMI_TIPO_GRAFICO.get(v_pulito, valore)
 
 
+# Nomi colore italiani (quelli che il modello NLP tende a generare) mappati
+# sull'equivalente hex, per colore1/colore2. Se il valore e' gia' un hex
+# valido o un nome colore CSS/SVG (es. 'red') resta invariato: SVG lo
+# interpreta correttamente da solo.
+_COLORI_NOME_HEX = {
+    "rosso": "#FF0000", "verde": "#008000", "blu": "#0000FF",
+    "giallo": "#FFD151", "arancione": "#FFA500", "viola": "#800080",
+    "rosa": "#FFC0CB", "nero": "#000000", "bianco": "#FFFFFF",
+    "grigio": "#808080", "marrone": "#8B4513", "azzurro": "#00BFFF",
+    "ciano": "#00FFFF", "magenta": "#FF00FF", "oro": "#FFD700",
+    "argento": "#C0C0C0", "turchese": "#40E0D0", "indaco": "#4B0082",
+    "beige": "#F5F5DC",
+}
+
+_HEX_PATTERN = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
+
+
+def _normalizza_colore(valore):
+    v = str(valore).strip()
+    if _HEX_PATTERN.match(v):
+        return v
+    return _COLORI_NOME_HEX.get(v.lower(), valore)
+
+
 def _parse_output_modello(pred_str):
     """
     Parser Universale Anti-Crash:
@@ -105,6 +151,8 @@ def _parse_output_modello(pred_str):
             parametri_puliti[chiave] = False
         elif v_str in ["none", "null", ""]:
             continue
+        elif chiave in ("colore1", "colore2"):
+            parametri_puliti[chiave] = _normalizza_colore(v)
         else:
             parametri_puliti[chiave] = v
 
@@ -158,7 +206,7 @@ def visualizza_grafico(graph):
     _mostra_grafico(plot_svg)
 
 
-def modifica_grafico(prompt, graph, model="Paolobricarello17/graphichetti-it5"):
+def modifica_grafico(prompt, graph, model=_MODELLO_DEFAULT):
     """Accetta un prompt vocale/testuale, aggiorna il dizionario 'graph' e ridisegna."""
     tokenizer, nlp_model = _carica_modello(model)
     device = next(nlp_model.parameters()).device
