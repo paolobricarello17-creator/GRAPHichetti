@@ -41,7 +41,7 @@ def _carica_modello(model="Paolobricarello17/graphichetti-it5"):
 # queste: _normalizza_chiave le riconduce alla forma canonica.
 _CHIAVI_CANONICHE = [
     "colore1", "colore2", "etichette_assi", "valori",
-    "numero_split", "bordi", "assi", "highlight", "kpi",
+    "numero_split", "bordi", "assi", "highlight", "kpi", "graph_type",
 ]
 
 
@@ -51,6 +51,24 @@ def _normalizza_chiave(k):
         if canonica.replace("_", "") == k_pulita:
             return canonica
     return k
+
+
+# Tipi di grafico validi (vedi detect_graph_type.py). Il modello NLP a volte
+# genera sinonimi/abbreviazioni (es. 'scatter' invece di 'scatterplot'):
+# _normalizza_tipo_grafico li riconduce al tipo canonico.
+_SINONIMI_TIPO_GRAFICO = {
+    "bar": "bar", "barre": "bar", "barchart": "bar",
+    "pie": "pie", "torta": "pie", "piechart": "pie",
+    "histogram": "histogram", "istogramma": "histogram", "hist": "histogram",
+    "scatterplot": "scatterplot", "scatter": "scatterplot", "dispersione": "scatterplot",
+    "composedbarchart": "composed_barchart", "barrecomposte": "composed_barchart",
+    "composed": "composed_barchart", "barrestratificate": "composed_barchart",
+}
+
+
+def _normalizza_tipo_grafico(valore):
+    v_pulito = str(valore).strip().lower().replace(" ", "").replace("_", "").replace("-", "")
+    return _SINONIMI_TIPO_GRAFICO.get(v_pulito, valore)
 
 
 def _parse_output_modello(pred_str):
@@ -156,13 +174,27 @@ def modifica_grafico(prompt, graph, model="Paolobricarello17/graphichetti-it5"):
     # Estrazione parametri con il parser universale
     nuovi_parametri = _parse_output_modello(pred_str)
 
+    if "graph_type" in nuovi_parametri:
+        nuovi_parametri["graph_type"] = _normalizza_tipo_grafico(nuovi_parametri["graph_type"])
+
     if nuovi_parametri:
+        graph_precedente = dict(graph)
         graph.update(nuovi_parametri)
-        print(f"[GRAPHichetti] Modifiche applicate con successo: {nuovi_parametri}")
+        try:
+            plot_svg = _disegna(graph)
+        except Exception as e:
+            # La modifica non e' disegnabile (es. tipo di grafico non valido
+            # per questi dati): annulliamo per non lasciare 'graph' in uno
+            # stato rotto, e ridisegniamo lo stato precedente.
+            graph.clear()
+            graph.update(graph_precedente)
+            print(f"[GRAPHichetti Warning] Modifica annullata, il grafico resta quello precedente: {e}")
+            plot_svg = _disegna(graph)
+        else:
+            print(f"[GRAPHichetti] Modifiche applicate con successo: {nuovi_parametri}")
     else:
         print("[GRAPHichetti Warning] Nessuna modifica rilevata nella frase.")
+        plot_svg = _disegna(graph)
 
-    # Ridisegno e visualizzazione
-    plot_svg = _disegna(graph)
     _mostra_grafico(plot_svg)
     return graph
