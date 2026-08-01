@@ -36,6 +36,23 @@ def _carica_modello(model="Paolobricarello17/graphichetti-it5"):
     return _tokenizer, _model
 
 
+# Chiavi impostabili in 'graph' (vedi initialize_graph.py). Il modello NLP
+# a volte genera varianti minori (underscore/spazi/maiuscole) rispetto a
+# queste: _normalizza_chiave le riconduce alla forma canonica.
+_CHIAVI_CANONICHE = [
+    "colore1", "colore2", "etichette_assi", "valori",
+    "numero_split", "bordi", "assi", "highlight", "kpi",
+]
+
+
+def _normalizza_chiave(k):
+    k_pulita = k.strip().lower().replace(" ", "").replace("_", "")
+    for canonica in _CHIAVI_CANONICHE:
+        if canonica.replace("_", "") == k_pulita:
+            return canonica
+    return k
+
+
 def _parse_output_modello(pred_str):
     """
     Parser Universale Anti-Crash:
@@ -58,19 +75,20 @@ def _parse_output_modello(pred_str):
                 parts = item.split(":", 1)
                 parametri[parts[0].strip()] = parts[1].strip()
 
-    # 3. Normalizzazione Tipi (Stringhe -> Booleani / Numeri + Correzione Refusi)
+    # 3. Normalizzazione Chiavi + Tipi (Stringhe -> Booleani / Numeri + Correzione Refusi)
     parametri_puliti = {}
     for k, v in parametri.items():
+        chiave = _normalizza_chiave(k)
         v_str = str(v).lower().strip()
-        
+
         if v_str in ["true", "rue"]:
-            parametri_puliti[k] = True
+            parametri_puliti[chiave] = True
         elif v_str in ["false", "alse", "lse"]:
-            parametri_puliti[k] = False
+            parametri_puliti[chiave] = False
         elif v_str in ["none", "null", ""]:
             continue
         else:
-            parametri_puliti[k] = v
+            parametri_puliti[chiave] = v
 
     return parametri_puliti
 
