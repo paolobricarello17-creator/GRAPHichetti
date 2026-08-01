@@ -101,6 +101,7 @@ def Scatterplot(variable1, variable2, graph=None):
 
     ## 3. Punti e Tratteggi degli Outlier ##
     barre = []
+    spessore_bordo = 0.5 * graph.get('bordi', 1)
     for i in df.index:
         cx = scale_x(df.at[i, 'x'])
         cy = scale_y(df.at[i, 'y'])
@@ -125,9 +126,9 @@ def Scatterplot(variable1, variable2, graph=None):
         barre.append(
             Circle(
                 cx=cx, cy=cy, r=radius, 
-                fill=fill_color, 
-                stroke="white" if not is_outlier else "black", 
-                stroke_width=0.5
+                fill=fill_color,
+                stroke="white" if not is_outlier else "black",
+                stroke_width=spessore_bordo
             )
         )
 

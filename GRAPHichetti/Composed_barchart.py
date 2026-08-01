@@ -95,6 +95,7 @@ def Grafico_barre_composto(variable1, variable2, graph=None):
 
     ## 5. Barre Stratificate (Fascia massima evidenziata per singola barra) ##
     barre = []
+    spessore_bordo = 1.5 * graph.get('bordi', 1)
     for i in range(n_categorie):
         x_pos = 10 + (i * larghezza_slot) + (larghezza_slot * 0.1) 
         valori_strati_barra = ct.iloc[i].tolist()
@@ -124,7 +125,7 @@ def Grafico_barre_composto(variable1, variable2, graph=None):
                     width=larghezza_barra,
                     fill=fill,
                     stroke="black",
-                    stroke_width=1.5
+                    stroke_width=spessore_bordo
                 )
             )
             y_corrente = y_pos_strato

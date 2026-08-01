@@ -85,6 +85,7 @@ _SINONIMI_TIPO_GRAFICO = {
     "scatterplot": "scatterplot", "scatter": "scatterplot", "dispersione": "scatterplot",
     "composedbarchart": "composed_barchart", "barrecomposte": "composed_barchart",
     "composed": "composed_barchart", "barrestratificate": "composed_barchart",
+    "stackedbar": "composed_barchart", "stackedbarchart": "composed_barchart",
 }
 
 
@@ -117,6 +118,23 @@ def _normalizza_colore(valore):
     return _COLORI_NOME_HEX.get(v.lower(), valore)
 
 
+def _normalizza_numero_split(valore):
+    """numero_split deve essere False (fasce automatiche) o un intero
+    positivo (numero di fasce). Il modello a volte genera True: non e' un
+    numero di fasce valido (Hist_chart.py farebbe int(True) = 1 fascia
+    sola), quindi in quel caso la modifica viene scartata invece di
+    rompere silenziosamente l'istogramma."""
+    if isinstance(valore, bool):
+        # bool e' sottotipo di int in Python (int(True) == 1): va intercettato
+        # esplicitamente, altrimenti 'True' passerebbe come se fosse 1 fascia.
+        return False if valore is False else None
+    try:
+        n = int(valore)
+    except (TypeError, ValueError):
+        return None
+    return n if n > 0 else None
+
+
 def _parse_output_modello(pred_str):
     """
     Parser Universale Anti-Crash:
@@ -146,15 +164,23 @@ def _parse_output_modello(pred_str):
         v_str = str(v).lower().strip()
 
         if v_str in ["true", "rue"]:
-            parametri_puliti[chiave] = True
+            valore = True
         elif v_str in ["false", "alse", "lse"]:
-            parametri_puliti[chiave] = False
+            valore = False
         elif v_str in ["none", "null", ""]:
             continue
         elif chiave in ("colore1", "colore2"):
-            parametri_puliti[chiave] = _normalizza_colore(v)
+            valore = _normalizza_colore(v)
         else:
-            parametri_puliti[chiave] = v
+            valore = v
+
+        if chiave == "numero_split":
+            valore = _normalizza_numero_split(valore)
+            if valore is None:
+                print(f"[GRAPHichetti Warning] Valore 'numero_split' non valido ('{v}'), modifica ignorata.")
+                continue
+
+        parametri_puliti[chiave] = valore
 
     return parametri_puliti
 

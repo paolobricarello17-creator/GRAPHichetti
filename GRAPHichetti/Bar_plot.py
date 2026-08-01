@@ -98,12 +98,13 @@ def Grafico_barre(variable1, graph=None):
     barre = []
     base = 380
     larghezza = 300 / n_categorie
+    spessore_bordo = 2 * graph.get('bordi', 1)
     for i in range(0, n_categorie):
         if category_name[i] in moda and graph.get('highlight') == True:
             fill = graph.get('colore1')
         else:
             fill = graph.get('colore2')
-            
+
         altezza = (valori[i] / valore_massimo) * altezza_max_grafico
         barre.append(
             Rect(
@@ -113,7 +114,7 @@ def Grafico_barre(variable1, graph=None):
                 width=larghezza,
                 fill=fill,
                 stroke="black",
-                stroke_width=2
+                stroke_width=spessore_bordo
             )
         )
 

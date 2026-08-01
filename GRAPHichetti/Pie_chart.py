@@ -38,7 +38,8 @@ def Grafico_torta(variable1, graph=None):
 
     ## 2. Spicchi della Torta (Sostituiscono le barre) ##
     barre = [] # Chiamata 'barre' per mantenere la tua struttura di output finale
-    
+    spessore_bordo = 1.5 * graph.get('bordi', 1)
+
     # Calcolo delle percentuali e degli angoli
     angolo_corrente = -math.pi / 2 # Partiamo dall'alto (ore 12)
 
@@ -52,7 +53,7 @@ def Grafico_torta(variable1, graph=None):
         # Se c'è una sola categoria, fa un cerchio pieno direttamente
         if n_categorie == 1:
             barre.append(
-                Circle(cx=cx, cy=cy, r=raggio, fill=fill, stroke="black", stroke_width=1.5)
+                Circle(cx=cx, cy=cy, r=raggio, fill=fill, stroke="black", stroke_width=spessore_bordo)
             )
             continue
 
@@ -75,7 +76,7 @@ def Grafico_torta(variable1, graph=None):
         path_d = f"M {cx} {cy} L {x1} {y1} A {raggio} {raggio} 0 {large_arc_flag} 1 {x2} {y2} Z"
         
         barre.append(
-            Path(d=path_d, fill=fill, stroke="black", stroke_width=1.5)
+            Path(d=path_d, fill=fill, stroke="black", stroke_width=spessore_bordo)
         )
 
         # Aggiorna l'angolo per il prossimo spicchio

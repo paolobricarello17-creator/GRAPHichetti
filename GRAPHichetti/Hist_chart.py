@@ -97,14 +97,15 @@ def Istogramma(variable1, graph=None):
 
     ## 5. Barre (Istogramma: adiacenti) ##
     barre = []
+    spessore_bordo = 2 * graph.get('bordi', 1)
     for i in range(n_categorie):
         if category_name[i] in nomi_moda and graph['highlight'] == True:
             fill = graph['colore1']
         else:
             fill = graph['colore2']
-            
+
         altezza = (valori[i] / valore_massimo) * altezza_max_grafico
-        
+
         barre.append(
             Rect(
                 x=10 + (i * larghezza_barra),
@@ -113,7 +114,7 @@ def Istogramma(variable1, graph=None):
                 width=larghezza_barra,
                 fill=fill,
                 stroke="black",
-                stroke_width=2
+                stroke_width=spessore_bordo
             )
         )
 
