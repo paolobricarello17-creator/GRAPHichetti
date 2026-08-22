@@ -68,11 +68,15 @@ _CHIAVI_CANONICHE = [
 
 
 def _normalizza_chiave(k):
+    """Ritorna None se k non corrisponde a nessuna chiave canonica, invece
+    di lasciarla passare invariata: una chiave inventata non deve finire
+    dentro 'graph' (nessun renderer la leggerebbe comunque, ma sporcherebbe
+    lo stato per sempre)."""
     k_pulita = k.strip().lower().replace(" ", "").replace("_", "")
     for canonica in _CHIAVI_CANONICHE:
         if canonica.replace("_", "") == k_pulita:
             return canonica
-    return k
+    return None
 
 
 # Tipi di grafico validi (vedi detect_graph_type.py). Il modello NLP a volte
@@ -109,13 +113,29 @@ _COLORI_NOME_HEX = {
 }
 
 _HEX_PATTERN = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
+_ALPHA_PATTERN = re.compile(r"^[a-zA-Z]+$")
 
 
 def _normalizza_colore(valore):
+    """Ritorna None se valore non e' riconoscibile come colore, invece di
+    lasciarlo passare invariato: a differenza di un tipo di grafico
+    invalido (che fallisce a _disegna e fa scattare il rollback gia'
+    presente in modifica_grafico), un colore invalido verrebbe scritto
+    silenziosamente in 'graph' e comparirebbe rotto nell'SVG senza che
+    nulla se ne accorga."""
     v = str(valore).strip()
     if _HEX_PATTERN.match(v):
         return v
-    return _COLORI_NOME_HEX.get(v.lower(), valore)
+    mappato = _COLORI_NOME_HEX.get(v.lower())
+    if mappato is not None:
+        return mappato
+    if _ALPHA_PATTERN.match(v):
+        # Non e' uno dei nomi italiani noti, ma e' comunque una singola
+        # parola alfabetica: potrebbe essere un nome colore CSS/SVG valido
+        # (es. 'red', 'salmon') che SVG interpreta da solo - lo lasciamo
+        # passare come da intento originale del commento sopra.
+        return v
+    return None
 
 
 def _normalizza_numero_split(valore):
@@ -161,6 +181,9 @@ def _parse_output_modello(pred_str):
     parametri_puliti = {}
     for k, v in parametri.items():
         chiave = _normalizza_chiave(k)
+        if chiave is None:
+            print(f"[GRAPHichetti Warning] Chiave sconosciuta ('{k}'), modifica ignorata.")
+            continue
         v_str = str(v).lower().strip()
 
         if v_str in ["true", "rue"]:
@@ -171,6 +194,9 @@ def _parse_output_modello(pred_str):
             continue
         elif chiave in ("colore1", "colore2"):
             valore = _normalizza_colore(v)
+            if valore is None:
+                print(f"[GRAPHichetti Warning] Valore colore non valido ('{v}') per '{chiave}', modifica ignorata.")
+                continue
         else:
             valore = v
 
